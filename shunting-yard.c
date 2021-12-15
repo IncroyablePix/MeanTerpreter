@@ -57,8 +57,8 @@ int shunting_yard_evaluate(tokenizer* t, symbol_table* st, double *solution)
                             op1_assoc = symbol_table_get_op_assoc(st, token_get_value(current_token));
 
                     if(symbol_table_contains_op(st, token_get_value(op2)) &&
-                       (op2_prec > op1_prec) && // op2 has strict higher precedence than op1
-                       (op2_prec == op1_prec && op1_assoc == T_ASSOC_LEFT))
+                            ((op2_prec > op1_prec) || // op2 has strict higher precedence than op1
+                            (op2_prec == op1_prec && op1_assoc == T_ASSOC_LEFT)))
                     {
                         token *op = stack_pop(sop);
                         double *v1 = stack_pop(sval),
