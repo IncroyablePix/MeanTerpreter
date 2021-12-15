@@ -162,3 +162,5 @@ fabric.properties
 .idea/codestream.xml
 
 # End of https://www.toptal.com/developers/gitignore/api/clion,c
+cmake-build-debug
+.idea

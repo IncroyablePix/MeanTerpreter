@@ -1,3 +1,0 @@
-"C:\Program Files\JetBrains\CLion 2020.3.1\bin\cmake\win\bin\cmake.exe" -E rm -f CMakeFiles\MyShot.dir/objects.a
-C:\PROGRA~1\MinGW64\mingw64\bin\ar.exe cr CMakeFiles\MyShot.dir/objects.a @CMakeFiles\MyShot.dir\objects1.rsp
-C:\PROGRA~1\MinGW64\mingw64\bin\gcc.exe -g -Wl,--whole-archive CMakeFiles\MyShot.dir/objects.a -Wl,--no-whole-archive -o MyShot.exe -Wl,--out-implib,libMyShot.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\MyShot.dir\linklibs.rsp
