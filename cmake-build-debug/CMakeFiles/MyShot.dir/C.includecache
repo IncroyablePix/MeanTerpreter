@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+E:/CRS/Marcelin_Dierickx/MyShot/tokenizer.c
+tokenizer.h
+E:/CRS/Marcelin_Dierickx/MyShot/tokenizer.h
+stdio.h
+-
+ctype.h
+-
+string.h
+-
+stdlib.h
+-
+
+E:/CRS/Marcelin_Dierickx/MyShot/tokenizer.h
+
