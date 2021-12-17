@@ -79,7 +79,6 @@ static void print_waiting()
 }
 
 //--- Operators
-
 double add(double a, double b)
 {
     return a + b;
@@ -126,6 +125,14 @@ double deg_tan(double degrees)
     return tan(deg_to_rad(degrees));
 }
 
+double absolute(double a)
+{
+    return a > 0 ? a : -a;
+}
+
+/*sin, cos, exp, sqrt, ln,
+abs ;*/
+
 symbol_table* calc_init_symbol_table()
 {
     symbol_table* st = NULL;
@@ -143,6 +150,9 @@ symbol_table* calc_init_symbol_table()
     symbol_table_insert_func(st, "sin", &deg_sin);
     symbol_table_insert_func(st, "cos", &deg_cos);
     symbol_table_insert_func(st, "tan", &deg_tan);
+    symbol_table_insert_func(st, "ln", &log);
+    symbol_table_insert_func(st, "sqrt", &sqrt);
+    symbol_table_insert_func(st, "abs", &absolute);
 
     return st;
 }
@@ -180,7 +190,7 @@ void calcul_repl()
         token* second_token = tokenizer_get_next_token(tknizer);
 
         if(token_get_type(first_token) == T_SYMBOL &&
-                token_get_type(second_token) == T_STOP)
+           token_get_type(second_token) == T_STOP)
         {
             char* name = (char*) token_get_value(first_token);
             if(!strcmp(name, "help"))
@@ -194,28 +204,35 @@ void calcul_repl()
         }
 
         if(token_get_type(first_token) == T_SYMBOL && // Assignment
-                token_get_type(second_token) == T_EQUAL)
+           token_get_type(second_token) == T_EQUAL)
         {
-            double *evaluated_result = malloc(sizeof(double));
-            int return_code = shunting_yard_evaluate(tknizer, st, evaluated_result);
+            double evaluated_result;
+            char* error_message = malloc(256 * sizeof(char));
+            int return_code = shunting_yard_evaluate(tknizer, st, &evaluated_result, &error_message);
             if(return_code)
             {
-                symbol_table_insert_var(st, (char*) token_get_value(first_token), *evaluated_result);
-                printf("%f\n", *evaluated_result);
+                symbol_table_insert_var(st, (char*) token_get_value(first_token), evaluated_result);
+                printf("%f\n", evaluated_result);
             }
-            free(evaluated_result);
+            else
+            {
+                printf("%s\n", error_message);
+            }
         }
         else
         {
             tokenizer_reset(tknizer);
-            double *evaluated_result = malloc(sizeof(double));
-            int return_code = shunting_yard_evaluate(tknizer, st, evaluated_result);
+            double evaluated_result;
+            char* error_message = malloc(256 * sizeof(char));
+            int return_code = shunting_yard_evaluate(tknizer, st, &evaluated_result, &error_message);
             if(return_code)
             {
-                printf("%f\n", *evaluated_result);
+                printf("%f\n", evaluated_result);
             }
-
-            free(evaluated_result);
+            else
+            {
+                printf("%s\n", error_message);
+            }
         }
 
         token_free(first_token, 1);

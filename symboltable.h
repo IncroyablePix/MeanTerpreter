@@ -8,7 +8,6 @@
 typedef enum
 {
     T_ASSOC_LEFT = -1,
-    T_ASSOC_NONE = 0,
     T_ASSOC_RIGHT = 1
 } operator_associativity;
 

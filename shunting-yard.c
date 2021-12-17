@@ -5,10 +5,11 @@
 #include "shunting-yard.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "stack.h"
 #include "list.h"
 
-int shunting_yard_evaluate(tokenizer* t, symbol_table* st, double *solution)
+int shunting_yard_evaluate(tokenizer* t, symbol_table* st, double *solution, char** error_msg)
 {
     stack* sop = stack_create();
     stack* sval = stack_create();
@@ -50,6 +51,13 @@ int shunting_yard_evaluate(tokenizer* t, symbol_table* st, double *solution)
             }
             case T_OPERATOR:
             {
+                if(stack_empty(sval))
+                {
+                    double *zero = malloc(sizeof(double));
+                    *zero = 0;
+                    stack_push(sval, zero);
+                }
+
                 while (!stack_empty(sop) && (op2 = stack_top(sop)) && token_get_type(op2) == T_OPERATOR)
                 {
                     int op1_prec = symbol_table_get_op_prec(st, token_get_value(current_token)),
@@ -98,7 +106,15 @@ int shunting_yard_evaluate(tokenizer* t, symbol_table* st, double *solution)
                     stack_push(sval, result);
                 }
 
-                stack_pop(sop); // removing left parenthesis
+                if(!stack_empty(sop))
+                {
+                    stack_pop(sop); // removing left parenthesis
+                }
+                else
+                {
+                    sprintf(*error_msg, "Unexpected token ')' at position %d.", token_get_position(current_token) + 1);
+                    return 0;
+                }
 
                 //---
 
@@ -107,9 +123,15 @@ int shunting_yard_evaluate(tokenizer* t, symbol_table* st, double *solution)
                     op2 = stack_top(sop);
                     if (token_get_type(op2) == T_SYMBOL)
                     {
-                        stack_pop(sop);
+                        //stack_pop(sop);
                         double *v = stack_pop(sval);
-                        FunctionFctType f_func = symbol_table_get_func(st, token_get_value(op2));
+                        char* symbol = token_get_value(op2);
+                        if(!symbol_table_contains_func(st, symbol))
+                        {
+                            sprintf(*error_msg, "Undefined identifier '%s' at position %d.", symbol, token_get_position(op2));
+                            return 0;
+                        }
+                        FunctionFctType f_func = symbol_table_get_func(st, symbol);
 
                         double *result = malloc(sizeof(double));
                         *result = f_func(*v);
@@ -124,9 +146,13 @@ int shunting_yard_evaluate(tokenizer* t, symbol_table* st, double *solution)
                 break;
         }
 
+        token_free(current_token, 0);
         current_token = next_token;
         next_token = tokenizer_get_next_token(t);
     }
+
+    token_free(current_token, 0);
+    token_free(next_token, 0);
 
     //---
 
@@ -148,7 +174,9 @@ int shunting_yard_evaluate(tokenizer* t, symbol_table* st, double *solution)
         }
     }
 
-    double* sol = stack_pop(sval);
-    *solution = *sol;
+    *solution = *((double*) stack_pop(sval));
+
+    stack_free(sop);
+    stack_free(sval);
     return 1;
 }

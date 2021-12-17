@@ -17,6 +17,6 @@
  *
  * @return If no error occurred
  */
-int shunting_yard_evaluate(tokenizer* t, symbol_table* st, double *solution);
+int shunting_yard_evaluate(tokenizer* t, symbol_table* st, double *solution, char** error_msg);
 
 #endif //SHOT_SHUNTING_YARD_H

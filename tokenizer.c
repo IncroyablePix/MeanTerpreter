@@ -200,7 +200,7 @@ token* tokenizer_get_next_token(tokenizer* t)
             cptr[l] = '\0';
             new_token->value = cptr;
             new_token->type = T_SYMBOL;
-            t->pos += l;
+            t->pos = pos + l;
             t->last_type = T_SYMBOL;
 
             return new_token;
